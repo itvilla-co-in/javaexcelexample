@@ -1,0 +1,52 @@
+Aspect oritented programming.  It a framework for module  of code for 
+Cross-cutting-concern. Wha is a cross cutting conerns ? 
+
+Lets take an example of Logging and Security. There might be general 
+requirement for all our application codes. Like all our controllers,
+DAO classes etc might need some sort of common way to Log and security. 
+
+That  Logging,Security,Transaction management is our cross cutting concern here.
+  
+
+Common use cases for AOP in Spring/java applications :
+Logging / Security / Transactions. 
+ 
+- Audit logging (Who what when)
+        - Exception handling (Notify developers or groups in case of issues)
+        - API management (No of calls, peak times, average load etc ..)
+        
+
+
+
+
+AOPO1.png
+
+  
+1. Code might be part of some methods and modules and might not be a pattern
+accross appliction. 
+2. Any change might require all the classes/modules but you might miss something
+
+Java does not support multiple Inhertiance so it wont work in real world project.
+Second solution is delegation like a login manager and security manager. 
+Any changes to delegated classes might impact all the classes again. 
+
+Consider a solution that your java appliation is just using objects/methods as
+normal and someone is in back end is taking care of security . This can be done
+by implementing proxy design patterns which are monitering the usage of objects/
+methods and also ensure that right Calls or Valid calls are able to access your
+classes/objects/methods.
+
+
+Benifits of AOP:
+
+
+
+Drawback of AOP
+
+
+
+AOP Terminology :
+Aspect :
+Advice :
+
+
