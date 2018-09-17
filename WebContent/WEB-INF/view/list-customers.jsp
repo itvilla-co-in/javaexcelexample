@@ -14,7 +14,7 @@
 <body>
 	<div id="wrapper">
 		<div id="header">
-			<h2> Listing Team Members </h2>
+			<h2> Listing Team Members Here </h2>
 		</div>
 	</div>
 	
@@ -39,8 +39,8 @@
             
 			<table>
 				<tr>
-					<th>First Name</th>
-					<th>Last Name</th>
+					<th>First-Name</th>
+					<th>Last-Name</th>
 					<th>Email</th>
 					<th>Action</th>
 				</tr>
