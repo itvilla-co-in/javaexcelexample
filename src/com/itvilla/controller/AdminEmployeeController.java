@@ -1,0 +1,181 @@
+package com.itvilla.controller;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.itvilla.entity.Customer;
+import com.itvilla.entity.Employee;
+import com.itvilla.service.CustomerService;
+
+@Controller
+@RequestMapping("/admin/emp/")
+public class AdminEmployeeController {
+
+	// need to inject our customer service
+	@Autowired
+	private CustomerService customerService;
+	
+	@InitBinder
+	public void dataBinding(WebDataBinder binder) {
+		 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, "empDob", new CustomDateEditor(dateFormat, true));
+
+		//binder.registerCustomEditor(Date.class, "dob", new CustomDateEditor(dateFormat, true));
+	}
+
+	
+	
+	
+	@GetMapping("/empaddform")
+	public String showempaddform(Model theModel) {
+		
+		// create model attribute to bind form data
+		Employee theEmployee = new Employee();
+		
+		theModel.addAttribute("employee", theEmployee);
+		System.out.println("Employee add form sent ");
+		return "empaddform";
+	}
+	
+	@GetMapping("/empuploadimage")
+	public String showempuploadimage(Model theModel) {
+		
+		// create model attribute to bind form data
+		//Employee theEmployee = new Employee();
+		
+		//theModel.addAttribute("employee", theEmployee);
+		MultipartFile file=null;
+		theModel.addAttribute("file", file);
+		System.out.println("is it even coming here in uploadimage url");
+		return "empuploadimage";
+		        
+	}
+	
+	
+	@PostMapping("/saveEmployee")
+	public String saveCustomer(@ModelAttribute("employee") @Valid Employee theEmployee,BindingResult result
+			,ModelMap model) 
+	{
+		
+		if(result.hasErrors()) 
+		{
+	    	System.out.println("Binding has errors ");
+	    	System.out.println("Binding has errors empid " + theEmployee.getEmpId());
+	    	System.out.println("Binding has errors firstname" + theEmployee.getFirstName());
+	    	System.out.println("Binding has errors lastname" + theEmployee.getLastName());
+	    	System.out.println("Binding has errorsdobbbbbb " + theEmployee.getEmpDob());
+	    	System.out.println("Binding has errors loc " + theEmployee.getEmpLoc());
+	    	System.out.println("Binding has errors loccode " + theEmployee.getEmpLoccode());
+	    	System.out.println("Binding has errors " + theEmployee.getEmpBand());
+	    	System.out.println("Binding has errors " + theEmployee.getEmpProfileimg());
+	    	
+	    	return "empaddform";
+
+	    }
+		model.addAttribute("theEmployee", theEmployee);
+		System.out.println("is it going to come here ??before calling save ");
+		// save the customer using our service
+		customerService.saveEmployee(theEmployee);	
+		System.out.println("is it going to come here ??????????");
+		return "empuploadimage";
+	}
+	
+	
+/*	@GetMapping("/singleFileUpload")
+	public String showsingleFileUpload(Model theModel) {
+		
+		// create model attribute to bind form data
+		//Employee theEmployee = new Employee();
+		MultipartFile file;
+		theModel.addAttribute("file", file);
+		System.out.println(" in get of the file get ");
+		return "empaddform";
+	}*/
+	
+	 // Handling single file upload request for employee profile 
+	   @PostMapping("/singleFileUpload")
+	   public String singleFileUpload(@RequestParam("file") MultipartFile file, Model model)
+	         throws IOException {
+		   System.out.println("in single file upload hanldoer");
+	      // Save file on system
+	      if (!file.getOriginalFilename().isEmpty()) {
+	    	  
+	    	  System.out.println(" in uploading file method");
+	    	  System.out.println("Name of the file " + file.getOriginalFilename());
+	    	  System.out.println("lets see hwat here in content type" + file.getContentType());
+	    	  System.out.println("lets gett he size ofthe file " + file.getSize());
+	    	  System.out.println("lets get the class" + file.getClass());
+	    	  
+	         BufferedOutputStream outputStream = new BufferedOutputStream(
+	               new FileOutputStream(
+	                     new File("D:/nk0072025/TECHM/images", file.getOriginalFilename())));
+	         outputStream.write(file.getBytes());
+	         outputStream.flush();
+	         outputStream.close();
+
+	         model.addAttribute("msg", "File uploaded successfully.");
+	      } else {
+	         model.addAttribute("msg", "Please select a valid file..");
+	      }
+	      
+	      return "redirect:/";
+	      //return "empuploadimage";
+	   }
+	
+	@GetMapping("/showFormForUpdate")
+	public String showFormForUpdate(@RequestParam("customerId") int theId,
+									Model theModel) {
+		
+		// get the customer from our service
+		Customer theCustomer = customerService.getCustomer(theId);	
+		
+		// set customer as a model attribute to pre-populate the form
+		theModel.addAttribute("customer", theCustomer);
+		
+		// send over to our form		
+		return "customer-form";
+	}
+	
+	@GetMapping("/delete")
+	public String deleteCustomer(@RequestParam("customerId") int theId) {
+		
+		// delete the customer
+		customerService.deleteCustomer(theId);
+		
+		return "redirect:/customer/list";
+	}
+}
+
+
+
+
+
+
+
+
+
+

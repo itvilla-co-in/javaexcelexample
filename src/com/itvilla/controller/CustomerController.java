@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.itvilla.dao.CustomerDao;
 import com.itvilla.entity.Customer;
 import com.itvilla.service.CustomerService;
 
@@ -19,69 +18,72 @@ import com.itvilla.service.CustomerService;
 @RequestMapping("/customer")
 public class CustomerController {
 
+	// need to inject our customer service
 	@Autowired
 	private CustomerService customerService;
 	
-	@RequestMapping("/list")
-	public String listCustomer(Model model) {
-		List<Customer> tempcustomers = customerService.getCustomers();
-		model.addAttribute("custs", tempcustomers);
-		System.out.println("is it getting from db " + tempcustomers);
-		return "list-customers";
+	@GetMapping("/list")
+	public String listCustomers(Model theModel) {
 		
+		// get customers from the service
+		List<Customer> theCustomers = customerService.getCustomers();
+				
+		// add the customers to the model
+		theModel.addAttribute("customers", theCustomers);
+		
+		return "list-customers";
 	}
-	
 	
 	@GetMapping("/showFormForAdd")
-	public String showFormForAdd(Model model) {
-		Customer customer = new Customer();
-		model.addAttribute("cust", customer);
+	public String showFormForAdd(Model theModel) {
+		
+		// create model attribute to bind form data
+		Customer theCustomer = new Customer();
+		
+		theModel.addAttribute("customer", theCustomer);
+		
 		return "customer-form";
 	}
-	
 	
 	@PostMapping("/saveCustomer")
-	public String saveCustomer(@ModelAttribute("cust") Customer thecust){
+	public String saveCustomer(@ModelAttribute("customer") Customer theCustomer) {
 		
-		customerService.saveCustomer(thecust);
+		// save the customer using our service
+		customerService.saveCustomer(theCustomer);	
+		
 		return "redirect:/customer/list";
 	}
 	
-	@RequestMapping("/showFormForUpdate")
+	@GetMapping("/showFormForUpdate")
 	public String showFormForUpdate(@RequestParam("customerId") int theId,
-			Model model) {
+									Model theModel) {
+		
 		// get the customer from our service
-				Customer theCustomer = customerService.getCustomer(theId);	
-				
-				// set customer as a model attribute to pre-populate the form
-				model.addAttribute("cust", theCustomer);
+		Customer theCustomer = customerService.getCustomer(theId);	
+		
+		// set customer as a model attribute to pre-populate the form
+		theModel.addAttribute("customer", theCustomer);
+		
+		// send over to our form		
 		return "customer-form";
-		
 	}
 	
-	@RequestMapping("/delete")
-	public String delete(@RequestParam("customerId") int theId,
-			Model model) {
-		System.out.println("Customer ID is in delete " + theId);
-		 
-		customerService.deleteCustomer(theId);	
+	@GetMapping("/delete")
+	public String deleteCustomer(@RequestParam("customerId") int theId) {
+		
+		// delete the customer
+		customerService.deleteCustomer(theId);
+		
 		return "redirect:/customer/list";
-		
 	}
-	
-	 @PostMapping("/search")
-	    public String searchCustomers(@RequestParam("theSearchName") String theSearchName,
-	                                    Model theModel) {
-	        // search customers from the service
-		 System.out.println("in the search name " + theSearchName);
-	        List<Customer> theCustomers = customerService.searchCustomers(theSearchName);
-	                
-	        // add the customers to the model
-	        theModel.addAttribute("custs", theCustomers);
-	        System.out.println("in the list lets check if seaching dao is working " + theCustomers);
-	        return "list-customers";        
-	    }
-	 
-	
-	
 }
+
+
+
+
+
+
+
+
+
+
