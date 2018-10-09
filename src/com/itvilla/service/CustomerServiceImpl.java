@@ -51,10 +51,25 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Override
 	@Transactional
-	public void saveEmployee(Employee theEmployee) {
-		customerDAO.saveEmployee(theEmployee);
+	public Integer saveEmployee(Employee theEmployee) {
+		Integer empid = customerDAO.saveEmployee(theEmployee);
+		return empid;
 		
 	}
+	
+	@Override
+	@Transactional
+	public Employee getEmployee(int theId) {
+		
+		return customerDAO.getEmployee(theId);
+	}
+	
+	@Override
+	@Transactional
+	public List<Employee> getEmployees() {
+		return customerDAO.getEmployees();
+	}
+	
 	
 	
 }

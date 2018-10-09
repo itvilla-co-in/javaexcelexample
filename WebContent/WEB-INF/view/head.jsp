@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
     <link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/images/favicon.ico" />
+    
+
     <!-- bootstrap -->
     <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- font awesome -->
@@ -32,5 +34,6 @@
     <!-- custom -->
     <link href="${pageContext.request.contextPath}/resources/css/custom.css" rel="stylesheet" type="text/css" />
     <!-- custom -->
-    
+    <link href="${pageContext.request.contextPath}/resources/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+	    
     

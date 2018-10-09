@@ -8,10 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -31,11 +34,16 @@ import com.itvilla.service.CustomerService;
 
 @Controller
 @RequestMapping("/admin/emp/")
+@Scope("session")
 public class AdminEmployeeController {
 
 	// need to inject our customer service
 	@Autowired
 	private CustomerService customerService;
+	
+	  
+	 //private HttpSession httpSession;
+	 
 	
 	@InitBinder
 	public void dataBinding(WebDataBinder binder) {
@@ -70,6 +78,7 @@ public class AdminEmployeeController {
 		//theModel.addAttribute("employee", theEmployee);
 		MultipartFile file=null;
 		theModel.addAttribute("file", file);
+		
 		System.out.println("is it even coming here in uploadimage url");
 		return "empuploadimage";
 		        
@@ -77,8 +86,8 @@ public class AdminEmployeeController {
 	
 	
 	@PostMapping("/saveEmployee")
-	public String saveCustomer(@ModelAttribute("employee") @Valid Employee theEmployee,BindingResult result
-			,ModelMap model) 
+	public String saveCustomer(HttpServletRequest request, @ModelAttribute("employee") @Valid Employee theEmployee,BindingResult result
+			,ModelMap model, HttpSession httpSession) 
 	{
 		
 		if(result.hasErrors()) 
@@ -97,9 +106,11 @@ public class AdminEmployeeController {
 
 	    }
 		model.addAttribute("theEmployee", theEmployee);
-		System.out.println("is it going to come here ??before calling save ");
+		System.out.println("is it going to come here ??before calling save  the sesion id is " + httpSession.getId());
 		// save the customer using our service
-		customerService.saveEmployee(theEmployee);	
+		Integer empid = customerService.saveEmployee(theEmployee);
+		//request.getSession();
+		httpSession.setAttribute("empid", empid);
 		System.out.println("is it going to come here ??????????");
 		return "empuploadimage";
 	}
@@ -118,9 +129,16 @@ public class AdminEmployeeController {
 	
 	 // Handling single file upload request for employee profile 
 	   @PostMapping("/singleFileUpload")
-	   public String singleFileUpload(@RequestParam("file") MultipartFile file, Model model)
+	   public String singleFileUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file, Model model,HttpSession httpSession)
 	         throws IOException {
 		   System.out.println("in single file upload hanldoer");
+		   System.out.println("is it going to come here in single file upload ??   the sesion id is " + httpSession.getId());
+		   System.out.println("Lets see if session has anything at all " + httpSession.getAttributeNames());
+		   Integer tempempid = (Integer) httpSession.getAttribute("empid");
+		   System.out.println("I am from the image method lets see if session is working " + tempempid);
+		   
+		  
+		   
 	      // Save file on system
 	      if (!file.getOriginalFilename().isEmpty()) {
 	    	  
@@ -129,23 +147,47 @@ public class AdminEmployeeController {
 	    	  System.out.println("lets see hwat here in content type" + file.getContentType());
 	    	  System.out.println("lets gett he size ofthe file " + file.getSize());
 	    	  System.out.println("lets get the class" + file.getClass());
-	    	  
+	    	  String tempfilename = file.getOriginalFilename();
 	         BufferedOutputStream outputStream = new BufferedOutputStream(
 	               new FileOutputStream(
 	                     new File("D:/nk0072025/TECHM/images", file.getOriginalFilename())));
 	         outputStream.write(file.getBytes());
 	         outputStream.flush();
 	         outputStream.close();
-
-	         model.addAttribute("msg", "File uploaded successfully.");
+	         
+	         // get them employee the update the path of the profile image.
+			 Employee theEmployee = customerService.getEmployee(tempempid);
+			 theEmployee.setEmpProfileimg(tempfilename);
+			 System.out.println("Employee for which image location is updated is " + theEmployee.toString());
+			 System.out.println("The image location is " + theEmployee.getEmpProfileimg());
+			 Integer tempupdateempid = customerService.saveEmployee(theEmployee);
+			 System.out.println("Emp with id " + tempupdateempid + "image location updated" );
+			   
+			 return "redirect:/admin/emp/emplist";
+			 //model.addAttribute("msg", "File uploaded successfully....");
 	      } else {
-	         model.addAttribute("msg", "Please select a valid file..");
+	         //model.addAttribute("msg", "Please select a valid file..");
+	    	  return "redirect:/admin/emp/emplist";
 	      }
 	      
-	      return "redirect:/";
+	      //return "redirect:/emplist";
 	      //return "empuploadimage";
 	   }
+	   
+	   
+	   @GetMapping("/emplist")
+		public String listCustomers(Model theModel) {
+			
+			// get customers from the service
+			List<Employee> theEmployees = customerService.getEmployees();
+					
+			// add the customers to the model
+			theModel.addAttribute("employess", theEmployees);
+			
+			return "list-employees";
+		}
 	
+	   
 	@GetMapping("/showFormForUpdate")
 	public String showFormForUpdate(@RequestParam("customerId") int theId,
 									Model theModel) {
@@ -168,6 +210,61 @@ public class AdminEmployeeController {
 		
 		return "redirect:/customer/list";
 	}
+	
+	
+	/******************** Bulk upload mappings Start  **************************/
+	
+	@GetMapping("/empbulkuploadpage")
+	public String showempbulkuploadpage(Model theModel) {
+		
+		// create model attribute to bind form data
+		//Employee theEmployee = new Employee();
+		
+		//theModel.addAttribute("employee", theEmployee);
+		MultipartFile excelfile=null;
+		theModel.addAttribute("excelfile", excelfile);
+		
+		System.out.println("Testing inside the excel file upload page. ");
+		return "empbulkuploadpage";
+		        
+	}
+	
+	
+	
+	   @PostMapping("/empFileUpload")
+	   public String empFileUpload(HttpServletRequest request, @RequestParam("excelfile") MultipartFile file, Model model,HttpSession httpSession)
+	         throws IOException {
+		   System.out.println("in emp file upload  hanldoer");
+	      // Save file on system
+	      if (!file.getOriginalFilename().isEmpty()) {
+	    	  System.out.println(" in uploading file method");
+	    	  System.out.println("Name of the file " + file.getOriginalFilename());
+	    	  System.out.println("lets see hwat here in content type" + file.getContentType());
+	    	  System.out.println("lets gett he size ofthe file " + file.getSize());
+	    	  System.out.println("lets get the class" + file.getClass());
+	    	  String tempfilename = file.getOriginalFilename();
+
+	    	  BufferedOutputStream outputStream = new BufferedOutputStream(
+	               new FileOutputStream(
+	                     new File("D:/nk0072025/TECHM/images", file.getOriginalFilename())));
+	         outputStream.write(file.getBytes());
+	         outputStream.flush();
+	         outputStream.close();
+	    	   
+			 return "redirect:/admin/emp/emplist";
+			 //model.addAttribute("msg", "File uploaded successfully....");
+	      } else {
+	         //model.addAttribute("msg", "Please select a valid file..");
+	    	  return "redirect:/admin/emp/emplist";
+	      }
+	      
+	      //return "redirect:/emplist";
+	      //return "empuploadimage";
+	   }
+	   
+	   /******************** Bulk upload mappings End  **************************/	   
+	
+	
 }
 
 

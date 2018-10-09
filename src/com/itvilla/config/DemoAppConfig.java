@@ -193,8 +193,9 @@ public class DemoAppConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-          .addResourceHandler("/resources/**")
-          .addResourceLocations("/resources/"); 
+          .addResourceHandler("/resources/**","/files/**")
+          .addResourceLocations("/resources/","file:D:/nk0072025/TECHM/images/"); 
+        											
     }	
 }
 

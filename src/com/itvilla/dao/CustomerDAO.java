@@ -16,8 +16,10 @@ public interface CustomerDAO {
 	public void deleteCustomer(int theId);
 	
 	// new methods
-	public void saveEmployee(Employee theEmployee);
-
+	public Integer saveEmployee(Employee theEmployee);
 	
+	public Employee getEmployee(int theId);
+	
+	public List<Employee> getEmployees();
 	
 }

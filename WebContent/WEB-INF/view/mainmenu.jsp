@@ -35,37 +35,46 @@
                             <!-- menu links -->
                             <ul class="menu-links">
                                 <!-- active class -->
-                                <li><a href="javascript:void(0)">Home</a>
+                                <li><a href="${pageContext.request.contextPath}/bloguserregister">Home</a>
                                                                        
                                 </li>
+								
                                 <li><a href="${pageContext.request.contextPath}/bloguserregister">Start Bloging</a>
                                                                        
                                 </li>
-                                <li><a href="javascript:void(0)">Admin</a>
+                                
+								<li><a href="javascript:void(0)">Admin</a>
                                     <!-- drop down multilevel  -->
                                     <ul class="drop-down-multilevel">
                                         <li><a href="javascript:void(0)">Employee Admin<i class="fa fa-angle-right fa-indicator"></i> </a>
                                             <!-- drop down second level -->
                                             <ul class="drop-down-multilevel">
-                                                <li><a href="${pageContext.request.contextPath}/admin/emp/empaddform">Add Employee<i class="fa fa-angle-right fa-indicator"></i></a>
-                                                    <!-- drop down third level -->
-                                                    <ul class="drop-down-multilevel">
-                                                    </ul>
-                                                </li>
-                                                <li><a href="">Add Project <i class="fa fa-angle-right fa-indicator"></i></a>
-                                                    
-                                                </li>
+                                                <li><a href="${pageContext.request.contextPath}/admin/emp/empaddform">Add Employee<i class="fa fa-angle-right fa-indicator"></i></a></li>
+                                                <li><a href="${pageContext.request.contextPath}/admin/emp/empbulkuploadpage">Bulk Upload<i class="fa fa-angle-right fa-indicator"></i></a></li>
+                                                <li><a href="">Add Project <i class="fa fa-angle-right fa-indicator"></i></a></li>
+											</ul>
                                         </li>
-                                       
+                                    </ul>
+                                 </li>
+                                 
+                                 
+                                 <li><a href="javascript:void(0)">Project</a>
+                                    <!-- drop down multilevel  -->
+                                            <ul class="drop-down-multilevel">
+                                                <li><a href="${pageContext.request.contextPath}/admin/emp/emplist">List Employee<i class="fa fa-angle-right fa-indicator"></i></a></li>
+                                 			</ul>
+                                    
+                                 </li>
+                                 
+                                    
                                  <li><a href="javascript:void(0)">Contact</a>
                                     <!-- drop down multilevel  -->
-                                    <ul class="drop-down-multilevel">
-                                        <li><a href="contact-us-1.html">Contact Us 1</a>
-                                            <li><a href="contact-us-2.html">Contact Us 2</a>
-                                                <li><a href="contact-us-3.html">Contact Us 3</a>
-                                                </li>
-                                    </ul>
-                                    </li>
+										<ul class="drop-down-multilevel">
+                                        <li><a href="contact-us-1.html">Contact Us 1</a></li>
+                                        <li><a href="contact-us-2.html">Contact Us 2</a></li>
+                                        <li><a href="contact-us-3.html">Contact Us 3</a></li>
+										</ul>
+                                 </li>
                             </ul>
                         </div>
                     </div>
