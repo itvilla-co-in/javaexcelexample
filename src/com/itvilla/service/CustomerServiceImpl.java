@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.itvilla.dao.CustomerDAO;
 import com.itvilla.entity.Customer;
 import com.itvilla.entity.Employee;
+import com.itvilla.entity.Employeebulk;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -56,6 +57,14 @@ public class CustomerServiceImpl implements CustomerService {
 		return empid;
 		
 	}
+
+	@Override
+	@Transactional
+	public void saveEmployeebulk(Employeebulk theEmployee) {
+
+		customerDAO.saveEmployeebulk(theEmployee);
+	}
+	
 	
 	@Override
 	@Transactional

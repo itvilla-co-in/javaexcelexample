@@ -4,9 +4,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import com.itvilla.entity.Customer;
 import com.itvilla.entity.Employee;
+import com.itvilla.entity.Employeebulk;
 import com.itvilla.service.CustomerService;
 
 @Controller
@@ -233,7 +239,7 @@ public class AdminEmployeeController {
 	
 	   @PostMapping("/empFileUpload")
 	   public String empFileUpload(HttpServletRequest request, @RequestParam("excelfile") MultipartFile file, Model model,HttpSession httpSession)
-	         throws IOException {
+	         throws IOException, ParseException {
 		   System.out.println("in emp file upload  hanldoer");
 	      // Save file on system
 	      if (!file.getOriginalFilename().isEmpty()) {
@@ -250,7 +256,95 @@ public class AdminEmployeeController {
 	         outputStream.write(file.getBytes());
 	         outputStream.flush();
 	         outputStream.close();
-	    	   
+	    	 
+	         /*  Logic to Uplod the data in Table */
+	         
+	         com.itvilla.entity.ExcelPOIHelper e = new com.itvilla.entity.ExcelPOIHelper();
+	 		 String location = "D:/nk0072025/TECHM/images/emp.xlsx";
+	         
+	 		Map<Integer, List<com.itvilla.entity.MyCell>> excelmap = new HashMap<>();;
+	     	try {
+	     		
+	     	excelmap = e.readExcel(location);
+	     	Integer ignoreheader = 0;
+	        // using for-each loop for iteration over Map.entrySet() 
+	        for (Map.Entry<Integer, List<com.itvilla.entity.MyCell>> entry : excelmap.entrySet())
+	        {
+	            System.out.println("Key = " + entry.getKey() + 
+	                             ", Value = " + entry.getValue()); 
+	            List<com.itvilla.entity.MyCell> temp = new ArrayList<>();
+	            temp = entry.getValue();
+	            System.out.println("***************");
+	       
+	            Integer i = 1;
+	            String empname = null;
+	            String empid = null;
+	            Employeebulk theEmployee = new Employeebulk();
+	            
+	            
+	            for(com.itvilla.entity.MyCell mc: temp) {
+	            	// ingore first looop for header	
+	               
+	            	
+	            	if (ignoreheader > 0)
+	            	{
+	            	  switch (i) { 
+	                  case 1: 
+	                	  theEmployee.setEmpId(mc.getContent()); 
+	                      i++;
+	                      break; 
+	                  case 2: 
+	                	  theEmployee.setFirstName(mc.getContent()); 
+	                      i++;
+	                      break; 
+	                  case 3: 
+	                	  theEmployee.setLastName(mc.getContent()); 
+	                      i++;
+	                      break;
+	                  case 4: 
+	                	  Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(mc.getContent());
+	                	  theEmployee.setEmpDob(date1); 
+	                      i++;
+	                      break;
+	                  case 5: 
+	                	  theEmployee.setEmpProfileimg(mc.getContent()); 
+	                      i++;
+	                      break;
+	                  case 6: 
+	                	  theEmployee.setEmpBand(mc.getContent()); 
+	                      i++;
+	                      break;
+	                  case 7: 
+	                	  theEmployee.setEmpLoc(mc.getContent()); 
+	                      i++;
+	                      break;
+	                  case 8: 
+	                	  theEmployee.setEmpLoccode(mc.getContent()); 
+	                      i++;
+	                      break;
+	                  default: 
+	                      System.out.println("invalid col"); 
+	                      break; 
+	                  } // switch ends
+	                
+	            	}
+	                //System.out.println("   ");
+	            }// for ends
+	            
+	            ignoreheader++;
+	            
+	            System.out.println("Value of empid is " + empid + "value of empname is " + empname);
+	            
+	           customerService.saveEmployeebulk(theEmployee);
+	        }
+	     	
+			} catch (IOException e1) {
+				System.out.println("Error" + e1.toString()); 
+				e1.printStackTrace();
+			}
+	     	
+	         /*  Logic to Uplod the data in Table */
+	         
 			 return "redirect:/admin/emp/emplist";
 			 //model.addAttribute("msg", "File uploaded successfully....");
 	      } else {

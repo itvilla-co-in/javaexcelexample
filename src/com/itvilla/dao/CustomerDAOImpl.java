@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.itvilla.entity.Customer;
 import com.itvilla.entity.Employee;
+import com.itvilla.entity.Employeebulk;
 
 @Repository
 public class CustomerDAOImpl implements CustomerDAO {
@@ -87,6 +88,21 @@ public class CustomerDAOImpl implements CustomerDAO {
 		
 		
 	}
+	
+	@Override
+	public void saveEmployeebulk(Employeebulk theEmployee) {
+		
+		// get current hibernate session
+		Session currentSession = sessionFactory.getCurrentSession();
+				
+		// save/upate the customer ... finally LOL
+		currentSession.saveOrUpdate(theEmployee);
+	 
+		
+		
+	}
+	
+	
 	
 	@Override
 	public Employee getEmployee(int theId) {

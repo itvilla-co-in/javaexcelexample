@@ -262,6 +262,7 @@ function counters() {
 /*************************
 CountdownTimer
 *************************/
+/*************************
 function countdownTimer() {
     $('#countdown').countdown({
         date: '10/01/2018 23:59:59',
@@ -281,7 +282,7 @@ function countdownTimer() {
     });
 
 }
-
+*************************/
 /*************************
 Isotope
 *************************/

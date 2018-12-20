@@ -31,6 +31,7 @@ public class ExcelPOIHelper {
     public Map<Integer, List<MyCell>> readExcel(String fileLocation) throws IOException {
 
         Map<Integer, List<MyCell>> data = new HashMap<>();
+        
         FileInputStream fis = new FileInputStream(new File(fileLocation));
 
         if (fileLocation.endsWith(".xls")) {
@@ -43,14 +44,16 @@ public class ExcelPOIHelper {
           .mapToInt(List::size)
           .max()
           .orElse(0);
-
+        
+         
+        
         data.values().stream()
           .filter(ls -> ls.size() < maxNrCols)
           .forEach(ls -> {
               IntStream.range(ls.size(), maxNrCols)
                 .forEach(i -> ls.add(new MyCell("")));
           });
-
+        
         return data;
     }
 
@@ -82,6 +85,9 @@ public class ExcelPOIHelper {
     private Map<Integer, List<MyCell>> readHSSFWorkbook(FileInputStream fis) throws IOException {
         Map<Integer, List<MyCell>> data = new HashMap<>();
         HSSFWorkbook workbook = null;
+        
+        System.out.println("Reading HSSFWorkbook");
+        
         try {
             workbook = new HSSFWorkbook(fis);
 
@@ -132,8 +138,11 @@ public class ExcelPOIHelper {
     }
 
     private Map<Integer, List<MyCell>> readXSSFWorkbook(FileInputStream fis) throws IOException {
-        XSSFWorkbook workbook = null;
+    	 System.out.println("Reading XSSFWorkbook");
+    	
+    	XSSFWorkbook workbook = null;
         Map<Integer, List<MyCell>> data = new HashMap<>();
+        
         try {
 
             workbook = new XSSFWorkbook(fis);
@@ -152,7 +161,7 @@ public class ExcelPOIHelper {
                             XSSFColor bgColor = cellStyle.getFillForegroundColorColor();
                             if (bgColor != null) {
                                 //byte[] rgbColor = bgColor.getRGB();
-                            	byte[] rgbColor = bgColor.getARgb();
+                            	byte[] rgbColor = bgColor.getARGB();
                                 myCell.setBgColor("rgb(" + (rgbColor[0] < 0 ? (rgbColor[0] + 0xff) : rgbColor[0]) + "," + (rgbColor[1] < 0 ? (rgbColor[1] + 0xff) : rgbColor[1]) + "," + (rgbColor[2] < 0 ? (rgbColor[2] + 0xff) : rgbColor[2]) + ")");
                             }
                             XSSFFont font = cellStyle.getFont();
@@ -163,7 +172,7 @@ public class ExcelPOIHelper {
                             XSSFColor textColor = font.getXSSFColor();
                             if (textColor != null) {
                                 //byte[] rgbColor = textColor.getRGB();
-                            	byte[] rgbColor = textColor.getARgb();
+                            	byte[] rgbColor = textColor.getARGB();
                                 myCell.setTextColor("rgb(" + (rgbColor[0] < 0 ? (rgbColor[0] + 0xff) : rgbColor[0]) + "," + (rgbColor[1] < 0 ? (rgbColor[1] + 0xff) : rgbColor[1]) + "," + (rgbColor[2] < 0 ? (rgbColor[2] + 0xff) : rgbColor[2]) + ")");
                             }
                             myCell.setContent(readCellContent(cell));

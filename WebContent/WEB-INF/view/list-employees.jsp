@@ -85,6 +85,7 @@ Blog -->
 					 
 					<th scope="col">Firstname</th>
 					<th scope="col">Last Name</th>
+					<th scope="col">DOB</th>
 					<th scope="col">band</th>
 					<th scope="col">Image loc</th>
 					<th scope="col">ProfileImage</th>
@@ -102,6 +103,7 @@ Blog -->
 						<th scope="row"> ${tempEmployee.id} </th>
 						<td> ${tempEmployee.firstName} </td>
 						<td> ${tempEmployee.lastName} </td>
+						<td> ${tempEmployee.empDob} </td>
 						<td> ${tempEmployee.empBand} </td>
 						<td> ${tempEmployee.empProfileimg} </td>
 						<td>
